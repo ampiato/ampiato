@@ -8,7 +8,7 @@ resolver = "2"
 
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.1"
 license = "proprietary"
 edition = "2021"
 repository = "https://github.com/ampiato/ampiato"
@@ -21,7 +21,7 @@ authors = [
 
 
 [workspace.dependencies]
-ampiato-macro = { version = "=0.1.0", path = "ampiato-macro" }
+ampiato-macro = { version = "=0.1.1", path = "ampiato-macro" }
 ampiato-tem = { version = "=0.1.0", path = "ampiato-tem" }
 
 chrono = { version = "0.4.38", features = ["serde"] }
