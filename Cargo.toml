@@ -9,7 +9,7 @@ resolver = "2"
 
 [workspace.package]
 version = "0.1.1"
-license = "proprietary"
+license = "CC-BY-NC-4.0"
 edition = "2021"
 repository = "https://github.com/ampiato/ampiato"
 keywords = ["database", "postgres", "replication", "incremental"]
@@ -22,9 +22,9 @@ authors = [
 
 [workspace.dependencies]
 ampiato-macro = { version = "=0.1.1", path = "ampiato-macro" }
-ampiato-tem = { version = "=0.1.0", path = "ampiato-tem" }
+ampiato-tem = { version = "=0.1.1", path = "ampiato-tem" }
 
 chrono = { version = "0.4.38", features = ["serde"] }
 petgraph = "0.6.5"
-sqlx = { version="*", features = ["derive", "macros", "runtime-tokio", "sqlite", "postgres"] }
+sqlx = { version="0.8.0", features = ["derive", "macros", "runtime-tokio", "postgres"] }
 

@@ -20,5 +20,5 @@ pub use value_provider::ValueProvider;
 
 pub fn print_banner() {
     use colored::Colorize as _;
-    println!("{}", include_str!("../../banner.txt").green().bold());
+    println!("{}", include_str!("../banner.txt").green().bold());
 }
