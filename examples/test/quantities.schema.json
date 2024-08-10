@@ -1,0 +1,155 @@
+{
+  "$defs": {
+    "Column": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "data_type": {
+          "$ref": "#/$defs/DataType"
+        }
+      },
+      "required": [
+        "name",
+        "data_type"
+      ],
+      "title": "Column",
+      "type": "object"
+    },
+    "DataType": {
+      "properties": {
+        "raw_str": {
+          "title": "Raw Str",
+          "type": "string"
+        }
+      },
+      "required": [
+        "raw_str"
+      ],
+      "title": "DataType",
+      "type": "object"
+    },
+    "Entity": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/Column"
+          },
+          "title": "Columns",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "columns"
+      ],
+      "title": "Entity",
+      "type": "object"
+    },
+    "SelField": {
+      "properties": {
+        "raw_str": {
+          "title": "Raw Str",
+          "type": "string"
+        },
+        "entity": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/Entity"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "raw_str"
+      ],
+      "title": "SelField",
+      "type": "object"
+    },
+    "Selector": {
+      "properties": {
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/SelField"
+          },
+          "title": "Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "fields"
+      ],
+      "title": "Selector",
+      "type": "object"
+    },
+    "Table": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "selector": {
+          "$ref": "#/$defs/Selector"
+        },
+        "time_repr": {
+          "anyOf": [
+            {
+              "const": "Changes"
+            },
+            {
+              "const": "Dense"
+            },
+            {
+              "const": "Interval"
+            }
+          ],
+          "title": "Time Repr"
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/Column"
+          },
+          "title": "Columns",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "selector",
+        "time_repr",
+        "columns"
+      ],
+      "title": "Table",
+      "type": "object"
+    }
+  },
+  "description": "Database of quantities.",
+  "properties": {
+    "entities": {
+      "items": {
+        "$ref": "#/$defs/Entity"
+      },
+      "title": "Entities",
+      "type": "array"
+    },
+    "tables": {
+      "items": {
+        "$ref": "#/$defs/Table"
+      },
+      "title": "Tables",
+      "type": "array"
+    }
+  },
+  "required": [
+    "entities",
+    "tables"
+  ],
+  "title": "QuantityDb",
+  "type": "object"
+}

@@ -1,0 +1,30 @@
+[workspace]
+members = [
+    "ampiato-macro",
+    "ampiato-tem",
+    "examples/test",
+]
+resolver = "2"
+
+
+[workspace.package]
+version = "0.1.0"
+license = "proprietary"
+edition = "2021"
+repository = "https://github.com/ampiato/ampiato"
+keywords = ["database", "postgres", "replication", "incremental"]
+categories = ["database", "finance", "mathematics", "science", "caching"]
+authors = [
+    "Tomas Krejci <tomas.krejci@ampiato.com>",
+]
+
+
+
+[workspace.dependencies]
+ampiato-macro = { version = "=0.1.0", path = "ampiato-macro" }
+ampiato-tem = { version = "=0.1.0", path = "ampiato-tem" }
+
+chrono = { version = "0.4.38", features = ["serde"] }
+petgraph = "0.6.5"
+sqlx = { version="*", features = ["derive", "macros", "runtime-tokio", "sqlite", "postgres"] }
+

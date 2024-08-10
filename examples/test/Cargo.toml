@@ -1,0 +1,24 @@
+[package]
+name = "test"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ampiato-tem = { path = "../../ampiato-tem" }
+ampiato-macro = { path = "../../ampiato-macro" }
+dotenv = "0.15.0"
+tokio = { version = "1.39.2", features = ["full"] }
+bytes = "1.1.0"
+sqlx = { version = "*", features = [
+    "derive",
+    "macros",
+    "runtime-tokio",
+    "sqlite",
+    "postgres",
+] }
+anyhow = "1.0.86"
+ctrlc = "3.4.4"
+uuid = { version = "1.10.0", features = ["v4"] }
+rand = "0.8.5"
+colored = "2.1.0"
+serde_json = "1.0.122"

@@ -1,0 +1,64 @@
+{
+    "entities": [
+        {
+            "name": "Blok",
+            "columns": [
+                {
+                    "name": "Jmeno",
+                    "data_type": "string"
+                },
+                {
+                    "name": "Barva",
+                    "data_type": "string"
+                }
+            ]
+        }
+    ],
+    "tables": [
+        {
+            "name": "BlokVykon", 
+            "selector": ["Blok", "Time"],
+            "time_repr": "Changes",
+            "columns": [
+                {
+                    "name": "pInst",
+                    "data_type": "float"
+                },
+                {
+                    "name": "pDos",
+                    "data_type": "float"
+                },
+                {
+                    "name": "pMin",
+                    "data_type": "float"
+                }
+            ]
+        },
+        {
+            "name": "BlokVS",
+            "selector": ["Blok", "Time"],
+            "time_repr": "Changes",
+            "columns": [
+                {
+                    "name": "Abs",
+                    "data_type": "float"
+                }
+            ]
+        },
+        {
+            "name": "Market",
+            "selector": ["Time"],
+            "time_repr": "Dense",
+            "columns": [
+                {
+                    "name": "CzkEur",
+                    "data_type": "float"
+                },
+                {
+                    "name": "cEle",
+                    "data_type": "float"
+                }
+            ]
+        }
+    ]
+}
