@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "ampiato-macro",
-    "ampiato-tem",
+    "ampiato",
     "examples/test",
 ]
 resolver = "2"

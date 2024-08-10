@@ -55,6 +55,7 @@ where
     VP: ValueProvider<Sel>,
 {
     pub async fn from_env(replication: bool) -> Result<Self, sqlx::Error> {
+        
         let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
         Self::from_database_url(&database_url, replication).await
     }

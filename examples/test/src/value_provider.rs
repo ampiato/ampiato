@@ -2,16 +2,16 @@
 
 use std::collections::HashMap;
 
-use ampiato_tem::core::BoxDynError;
-use ampiato_tem::replication::pgoutput;
-use ampiato_tem::replication::pgoutput::Decode;
-use ampiato_tem::replication::TableFromTupleData;
-use ampiato_tem::FromTupleData;
-use ampiato_tem::{Error, TableMetadata, TableValues};
-use ampiato_tem::{Time, TimeSeriesChanges, TimeSeriesDense, ValueProvider as _};
+use ampiato::core::BoxDynError;
+use ampiato::replication::pgoutput;
+use ampiato::replication::pgoutput::Decode;
+use ampiato::replication::TableFromTupleData;
+use ampiato::FromTupleData;
+use ampiato::{Error, TableMetadata, TableValues};
+use ampiato::{Time, TimeSeriesChanges, TimeSeriesDense, ValueProvider as _};
 use sqlx::Row;
 
-pub type Db = ampiato_tem::Db<Selector, Table, ValueProvider>;
+pub type Db = ampiato::Db<Selector, Table, ValueProvider>;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, sqlx::Type)]
 pub struct Blok(i64);
@@ -363,7 +363,7 @@ impl ValueProvider {
     }
 }
 
-impl ampiato_tem::ValueProvider<Selector> for ValueProvider {
+impl ampiato::ValueProvider<Selector> for ValueProvider {
     async fn from_pool(pool: &sqlx::PgPool) -> Self {
         let vp = load_value_provider(pool).await;
         vp
@@ -411,7 +411,7 @@ impl ampiato_tem::ValueProvider<Selector> for ValueProvider {
 
 pub mod BlokVykon {
     use super::{Blok, Db, Selector};
-    use ampiato_tem::Time;
+    use ampiato::Time;
 
     pub fn pInst(db: &Db, b: Blok, t: Time) -> f64 {
         db.get_value("BlokVykonpInst", Selector::Blok(b), t)
@@ -428,7 +428,7 @@ pub mod BlokVykon {
 
 pub mod BlokVS {
     use super::{Blok, Db, Selector};
-    use ampiato_tem::Time;
+    use ampiato::Time;
 
     pub fn Abs(db: &Db, b: Blok, t: Time) -> f64 {
         db.get_value("BlokVSAbs", Selector::Blok(b), t)
@@ -437,7 +437,7 @@ pub mod BlokVS {
 
 pub mod Market {
     use super::{Blok, Db, Selector};
-    use ampiato_tem::Time;
+    use ampiato::Time;
 
     pub fn CzkEur(db: &Db, t: Time) -> f64 {
         db.get_value("MarketCzkEur", Selector::Unit(()), t)
@@ -489,6 +489,7 @@ pub mod prelude {
     pub use super::BlokVykon::{pDos, pInst, pMin};
     pub use super::Market::{cEle, CzkEur};
     pub use super::{load_value_provider, Db, Selector, Table, ValueProvider};
-    pub use ampiato_tem::ast::*;
-    pub use ampiato_tem::Time;
+    pub use ampiato::ast::*;
+    pub use ampiato::prelude::*;
+    pub use ampiato::Time;
 }

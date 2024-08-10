@@ -1,5 +1,5 @@
 [package]
-name = "ampiato-tem"
+name = "ampiato"
 version.workspace = true
 license.workspace = true
 edition.workspace = true

@@ -611,7 +611,7 @@ def render_table_mod(table: Table) -> list[str]:
 
     lines += [
         "    use super::{Selector, Db, Blok};",
-        "    use ampiato_tem::Time;",
+        "    use ampiato::Time;",
         "",
     ]
 
@@ -642,9 +642,10 @@ def render_table_mod(table: Table) -> list[str]:
 def render_prelude(db: QuantityDb) -> list[str]:
     lines = [
         "pub mod prelude {",
+        "    pub use ampiato::prelude::*;",
         "    pub use super::{Db, Selector, Table, ValueProvider, load_value_provider};",
-        "    pub use ampiato_tem::ast::*;",
-        "    pub use ampiato_tem::Time;",
+        "    pub use ampiato::ast::*;",
+        "    pub use ampiato::Time;",
     ]
 
     for table in db.tables:
@@ -709,7 +710,7 @@ def render_value_provider_class(db: QuantityDb) -> list[str]:
     ]
 
     lines += [
-        "impl ampiato_tem::ValueProvider<Selector> for ValueProvider {",
+        "impl ampiato::ValueProvider<Selector> for ValueProvider {",
         "    async fn from_pool(pool: &sqlx::PgPool) -> Self {",
         "        let vp = load_value_provider(pool).await;",
         "        vp",
@@ -789,16 +790,16 @@ def render_value_provider(path: Path, db: QuantityDb) -> list[str]:
 
     use std::collections::HashMap;
 
-    use ampiato_tem::replication::pgoutput;
-    use ampiato_tem::core::BoxDynError;
-    use ampiato_tem::replication::pgoutput::Decode;
-    use ampiato_tem::replication::TableFromTupleData;
-    use ampiato_tem::{Time, TimeSeriesChanges, TimeSeriesDense, ValueProvider as _};
-    use ampiato_tem::{Error, TableMetadata, TableValues};
-    use ampiato_tem::FromTupleData;
+    use ampiato::replication::pgoutput;
+    use ampiato::core::BoxDynError;
+    use ampiato::replication::pgoutput::Decode;
+    use ampiato::replication::TableFromTupleData;
+    use ampiato::{Time, TimeSeriesChanges, TimeSeriesDense, ValueProvider as _};
+    use ampiato::{Error, TableMetadata, TableValues};
+    use ampiato::FromTupleData;
     use sqlx::Row;
 
-    pub type Db = ampiato_tem::Db<Selector, Table, ValueProvider>;
+    pub type Db = ampiato::Db<Selector, Table, ValueProvider>;
 
     """)
 

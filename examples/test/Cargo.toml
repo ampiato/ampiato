@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ampiato-tem = { path = "../../ampiato-tem" }
+ampiato = { path = "../../ampiato" }
 ampiato-macro = { path = "../../ampiato-macro" }
 dotenv = "0.15.0"
 tokio = { version = "1.39.2", features = ["full"] }
@@ -22,3 +22,7 @@ uuid = { version = "1.10.0", features = ["v4"] }
 rand = "0.8.5"
 colored = "2.1.0"
 serde_json = "1.0.122"
+
+[build-dependencies]
+dotenv = "0.15.0"
+subprocess = "0.2.9"

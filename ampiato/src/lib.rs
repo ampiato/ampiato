@@ -5,6 +5,7 @@ mod db;
 pub mod replication;
 mod ts;
 mod value_provider;
+pub mod prelude;
 
 // Reeexported modules
 
