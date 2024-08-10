@@ -1,5 +1,6 @@
 [package]
 name = "ampiato-macro"
+description = "🧮 The Rust Powerplant Scheduling Toolkit. A Rust crate to build a great powerplant optimization and scheduling software. Automatic database migrations, consistent code and schema, simple to use entity model, incremental computation, database change capture."
 version.workspace = true
 license.workspace = true
 edition.workspace = true
