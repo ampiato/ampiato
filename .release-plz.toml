@@ -1,0 +1,13 @@
+[workspace]
+pr_labels = ["release"] 
+
+[[package]]
+name = "ampiato"
+
+[[package]]
+name = "ampiato-macro"
+
+[[package]]
+name = "test"
+release = false
+
