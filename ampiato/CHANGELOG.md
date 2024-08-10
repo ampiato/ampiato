@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2](https://github.com/ampiato/ampiato/compare/ampiato-v0.1.1...ampiato-v0.1.2) - 2024-08-10
+
+### Other
+- 📕 Package description
+- Merge pull request [#3](https://github.com/ampiato/ampiato/pull/3) from ampiato/sqlx-at-package-level
+- Sqlx at package level
+
 ## [0.1.1](https://github.com/ampiato/ampiato/compare/ampiato-v0.1.0...ampiato-v0.1.1) - 2024-08-10
 
 ### Other
