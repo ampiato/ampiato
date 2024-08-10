@@ -1,9 +1,5 @@
 [workspace]
-members = [
-    "ampiato-macro",
-    "ampiato",
-    "examples/test",
-]
+members = ["ampiato-macro", "ampiato", "examples/test"]
 resolver = "2"
 
 
@@ -14,17 +10,15 @@ edition = "2021"
 repository = "https://github.com/ampiato/ampiato"
 keywords = ["database", "postgres", "replication", "incremental"]
 categories = ["database", "finance", "mathematics", "science", "caching"]
-authors = [
-    "Tomas Krejci <tomas.krejci@ampiato.com>",
-]
-
+authors = ["Tomas Krejci <tomas.krejci@ampiato.com>"]
 
 
 [workspace.dependencies]
-ampiato-macro = { version = "=0.1.1", path = "ampiato-macro" }
-ampiato-tem = { version = "=0.1.1", path = "ampiato-tem" }
-
 chrono = { version = "0.4.38", features = ["serde"] }
 petgraph = "0.6.5"
-sqlx = { version="0.8.0", features = ["derive", "macros", "runtime-tokio", "postgres"] }
-
+sqlx = { version = "0.8.0", features = [
+    "derive",
+    "macros",
+    "runtime-tokio",
+    "postgres",
+] }
