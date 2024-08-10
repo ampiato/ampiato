@@ -1,0 +1,68 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT \n            oid as \"oid: i32\",\n            pubname,\n            pubowner as \"pubowner: i32\",\n            puballtables,\n            pubinsert,\n            pubupdate,\n            pubdelete,\n            pubtruncate,\n            pubviaroot\n        FROM \n            pg_publication;\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "oid: i32",
+        "type_info": "Oid"
+      },
+      {
+        "ordinal": 1,
+        "name": "pubname",
+        "type_info": "Name"
+      },
+      {
+        "ordinal": 2,
+        "name": "pubowner: i32",
+        "type_info": "Oid"
+      },
+      {
+        "ordinal": 3,
+        "name": "puballtables",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 4,
+        "name": "pubinsert",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 5,
+        "name": "pubupdate",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 6,
+        "name": "pubdelete",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 7,
+        "name": "pubtruncate",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 8,
+        "name": "pubviaroot",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "2bf6ce612030f7515aa6b049b7bb9705bcf82bf4389711fa3d9c6a302e320a1b"
+}

@@ -1,0 +1,130 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT \n            slot_name,\n            plugin,\n            slot_type,\n            datoid as \"datoid: i32\",\n            database,\n            temporary,\n            active,\n            active_pid,\n            xmin as \"xmin: i32\",\n            catalog_xmin as \"catalog_xmin: i32\",\n            restart_lsn as \"restart_lsn: i64\",\n            confirmed_flush_lsn as \"confirmed_flush_lsn: i64\",\n            wal_status,\n            safe_wal_size,\n            two_phase,\n            conflicting\n        FROM \n            pg_replication_slots;\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "slot_name",
+        "type_info": "Name"
+      },
+      {
+        "ordinal": 1,
+        "name": "plugin",
+        "type_info": "Name"
+      },
+      {
+        "ordinal": 2,
+        "name": "slot_type",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "datoid: i32",
+        "type_info": "Oid"
+      },
+      {
+        "ordinal": 4,
+        "name": "database",
+        "type_info": "Name"
+      },
+      {
+        "ordinal": 5,
+        "name": "temporary",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 6,
+        "name": "active",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 7,
+        "name": "active_pid",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 8,
+        "name": "xmin: i32",
+        "type_info": {
+          "Custom": {
+            "name": "xid",
+            "kind": "Simple"
+          }
+        }
+      },
+      {
+        "ordinal": 9,
+        "name": "catalog_xmin: i32",
+        "type_info": {
+          "Custom": {
+            "name": "xid",
+            "kind": "Simple"
+          }
+        }
+      },
+      {
+        "ordinal": 10,
+        "name": "restart_lsn: i64",
+        "type_info": {
+          "Custom": {
+            "name": "pg_lsn",
+            "kind": "Simple"
+          }
+        }
+      },
+      {
+        "ordinal": 11,
+        "name": "confirmed_flush_lsn: i64",
+        "type_info": {
+          "Custom": {
+            "name": "pg_lsn",
+            "kind": "Simple"
+          }
+        }
+      },
+      {
+        "ordinal": 12,
+        "name": "wal_status",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 13,
+        "name": "safe_wal_size",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 14,
+        "name": "two_phase",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 15,
+        "name": "conflicting",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "44de6eb9bac6e0279ca0bf3217136726900f0c8968ba49bacd24f8e30a441088"
+}

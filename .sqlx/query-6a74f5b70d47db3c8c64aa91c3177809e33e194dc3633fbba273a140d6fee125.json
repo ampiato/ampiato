@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT pg_create_logical_replication_slot($1, 'pgoutput', temporary := true);",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "pg_create_logical_replication_slot",
+        "type_info": "Record"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Name"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "6a74f5b70d47db3c8c64aa91c3177809e33e194dc3633fbba273a140d6fee125"
+}
