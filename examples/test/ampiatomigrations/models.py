@@ -4,6 +4,7 @@ from django.db import models
 
 
 class BlokDef(models.Model):
+    IdBlokDef = models.BigAutoField(primary_key=True, db_column="IdBlokDef")
     Jmeno = models.TextField()
     Barva = models.TextField()
 

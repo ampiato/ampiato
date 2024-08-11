@@ -26,18 +26,20 @@ pub async fn main() -> anyhow::Result<()> {
     ampiato::print_banner();
 
     let t = Time::from_string("2024-01-18 02:00:00+01:00").unwrap();
+    let b = db.value_provider().get_entity_Blok("B1").unwrap();
 
-    let c_ele_czk = cEleCzk(&db, t);
-    println!("Na počátku bylo cEleCzk: {}", c_ele_czk);
+    let p_max= pMax(&db, b, t);
+    println!("Na počátku bylo p_max: {}", p_max);
 
-    let subscription_id = db.subscribe("cEleCzk", &Selector::Unit(()), &t);
+
+    let subscription_id = db.subscribe("pMax", &Selector::Blok(b), &t);
 
     loop {
         let updated_subscribers = db.sync_changes().await?;
 
         if updated_subscribers.contains(&subscription_id) {
-            let c_ele_czk = cEleCzk(&db, t);
-            println!("cEleCzk: {}", c_ele_czk);
+            let p_max = pMax(&db, b, t);
+            println!("cEleCzk: {}", p_max);
         }
     }
 }
