@@ -9,5 +9,6 @@ fn main() {
     subprocess::Exec::cmd("python")
         .arg("manage.py")
         .join()
-        .unwrap();
+        .unwrap()
+        .success();
 }

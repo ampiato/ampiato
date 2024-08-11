@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use ampiato::core::BoxDynError;
 use ampiato::replication::pgoutput;
 use ampiato::replication::pgoutput::Decode;
+use ampiato::replication::pgoutput::EntityRef;
 use ampiato::replication::TableFromTupleData;
 use ampiato::FromTupleData;
 use ampiato::{Error, TableMetadata, TableValues};
@@ -17,6 +18,12 @@ pub type Db = ampiato::Db<Selector, Table, ValueProvider>;
 pub struct Blok(i64);
 
 impl pgoutput::EntityRef for Blok {
+    type EntityDef = BlokDef;
+
+    fn entity_name() -> &'static str {
+        "Blok"
+    }
+
     fn id(&self) -> i64 {
         self.0
     }
@@ -26,9 +33,17 @@ impl pgoutput::EntityRef for Blok {
     }
 }
 
+#[derive(Debug, Clone, sqlx::FromRow)]
 pub struct BlokDef {
+    pub IdBlokDef: i64,
     pub Jmeno: String,
     pub Barva: String,
+}
+
+impl BlokDef {
+    pub fn query() -> &'static str {
+        r#"SELECT * FROM "BlokDef" ORDER BY "IdBlokDef""#
+    }
 }
 
 pub mod tables {
@@ -48,7 +63,7 @@ pub mod tables {
     impl sqlx::FromRow<'_, sqlx::postgres::PgRow> for BlokVykon {
         fn from_row(row: &sqlx::postgres::PgRow) -> Result<Self, sqlx::Error> {
             Ok(Self {
-                Blok: row.try_get("Blok")?,
+                Blok: Blok(row.try_get("IdBlokDef")?),
                 Time: Time(row.try_get("Time")?),
                 pInst: row.try_get("pInst")?,
                 pDos: row.try_get("pDos")?,
@@ -86,10 +101,10 @@ pub mod tables {
 
     impl FromTupleData for BlokVykon {
         fn from_tuple_data(tuple_data: &pgoutput::TupleData) -> Result<Self, Error> {
-            if tuple_data.number_of_columns != 3 {
+            if tuple_data.number_of_columns != 6 {
                 return Err(Error::UnexpectedNumberOfColumns {
                     actual: tuple_data.number_of_columns as usize,
-                    expected: 3,
+                    expected: 6,
                 });
             }
 
@@ -133,7 +148,7 @@ pub mod tables {
     impl sqlx::FromRow<'_, sqlx::postgres::PgRow> for BlokVS {
         fn from_row(row: &sqlx::postgres::PgRow) -> Result<Self, sqlx::Error> {
             Ok(Self {
-                Blok: row.try_get("Blok")?,
+                Blok: Blok(row.try_get("IdBlokDef")?),
                 Time: Time(row.try_get("Time")?),
                 Abs: row.try_get("Abs")?,
             })
@@ -167,10 +182,10 @@ pub mod tables {
 
     impl FromTupleData for BlokVS {
         fn from_tuple_data(tuple_data: &pgoutput::TupleData) -> Result<Self, Error> {
-            if tuple_data.number_of_columns != 3 {
+            if tuple_data.number_of_columns != 4 {
                 return Err(Error::UnexpectedNumberOfColumns {
                     actual: tuple_data.number_of_columns as usize,
-                    expected: 3,
+                    expected: 4,
                 });
             }
 
@@ -242,10 +257,10 @@ pub mod tables {
 
     impl FromTupleData for Market {
         fn from_tuple_data(tuple_data: &pgoutput::TupleData) -> Result<Self, Error> {
-            if tuple_data.number_of_columns != 3 {
+            if tuple_data.number_of_columns != 4 {
                 return Err(Error::UnexpectedNumberOfColumns {
                     actual: tuple_data.number_of_columns as usize,
-                    expected: 3,
+                    expected: 4,
                 });
             }
 
@@ -330,6 +345,7 @@ pub enum Selector {
 
 #[derive(Debug)]
 pub struct ValueProvider {
+    Blok: HashMap<String, BlokDef>,
     BlokVykonpInst: HashMap<Selector, TimeSeriesChanges<f64>>,
     BlokVykonpDos: HashMap<Selector, TimeSeriesChanges<f64>>,
     BlokVykonpMin: HashMap<Selector, TimeSeriesChanges<f64>>,
@@ -341,6 +357,7 @@ pub struct ValueProvider {
 impl ValueProvider {
     pub fn new() -> Self {
         Self {
+            Blok: HashMap::new(),
             BlokVykonpInst: HashMap::new(),
             BlokVykonpDos: HashMap::new(),
             BlokVykonpMin: HashMap::new(),
@@ -348,6 +365,15 @@ impl ValueProvider {
             MarketCzkEur: HashMap::new(),
             MarketcEle: HashMap::new(),
         }
+    }
+
+    pub fn get_entity_def_Blok(&self, name: &str) -> Option<&BlokDef> {
+        self.Blok.get(name)
+    }
+
+    pub fn get_entity_Blok(&self, name: &str) -> Option<Blok> {
+        let entity_def = self.get_entity_def_Blok(name)?;
+        Some(Blok(entity_def.IdBlokDef))
     }
 
     fn _get_value_impl(&self, name: &'static str, selector: &Selector, t: &Time) -> Option<f64> {
@@ -450,6 +476,13 @@ pub mod Market {
 
 pub async fn load_value_provider(pool: &sqlx::PgPool) -> ValueProvider {
     let mut vp = ValueProvider::new();
+    let rows = sqlx::query_as::<_, BlokDef>(&BlokDef::query())
+        .fetch_all(pool)
+        .await
+        .unwrap();
+    for row in rows {
+        vp.Blok.insert(row.Jmeno.clone(), row);
+    }
     let rows = sqlx::query_as::<_, tables::BlokVykon>(&tables::BlokVykon::query())
         .fetch_all(pool)
         .await

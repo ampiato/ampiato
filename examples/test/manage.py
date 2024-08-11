@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import dotenv
 import subprocess
 from pathlib import Path
 from textwrap import dedent
@@ -205,6 +206,7 @@ def write_migrations(path: Path, db: QuantityDb):
 def serialize_entity(entity: Entity) -> list[str]:
     lines = []
     lines.append(f"class {entity.table_name}(models.Model):")
+    lines.append(f"    Id{entity.table_name} = models.BigAutoField(primary_key=True, db_column=\"Id{entity.table_name}\")")
     for column in entity.columns:
         lines.append(f"    {column.name} = models.{column.data_type}()")
     lines += [
@@ -340,6 +342,12 @@ def render_entity(entity: Entity) -> list[str]:
         f"pub struct {entity.name}(i64);",
         "",
         f"impl pgoutput::EntityRef for {entity.name} {{",
+        f"   type EntityDef = {entity.name}Def;",
+        "",
+        "    fn entity_name() -> &'static str {",
+        f"        \"{entity.name}\"",
+        "    }",
+        "",
         "    fn id(&self) -> i64 {",
         "        self.0",
         "    }",
@@ -350,7 +358,9 @@ def render_entity(entity: Entity) -> list[str]:
         "}",
 
         "",
+        "#[derive(Debug, Clone, sqlx::FromRow)]",
         f"pub struct {entity.name}Def {{",
+        f"    pub Id{entity.name}Def: i64,",
     ]
     for column in entity.columns:
         lines += [
@@ -358,7 +368,14 @@ def render_entity(entity: Entity) -> list[str]:
         ]
     lines += [
         "}",
+        "",
+        f"impl {entity.name}Def {{",
+        "    pub fn query() -> &'static str {",
+        f"        r#\"SELECT * FROM \"{entity.table_name}\" ORDER BY \"Id{entity.name}Def\"\"#",
+        "    }",
+        "}",
     ]
+
     return lines
 
 
@@ -425,7 +442,7 @@ def render_table(table: Table) -> list[str]:
             ]
         else:
             lines += [
-                f'            {sel.raw_str}: row.try_get("{sel.raw_str}")?,',
+                f'            {sel.raw_str}: {sel.raw_str}(row.try_get("Id{sel.raw_str}Def")?),',
             ]
     for column in table.columns:
         lines += [
@@ -463,6 +480,7 @@ def render_table(table: Table) -> list[str]:
         lines += [
             f'            "{column.name}",',
         ]
+    n_cols = len(table.columns) + len(table.selector.fields) + 1
     lines += [
         "        ]",
         "    }",
@@ -474,10 +492,10 @@ def render_table(table: Table) -> list[str]:
         "",
         f"impl FromTupleData for {table.name} {{",
         "    fn from_tuple_data(tuple_data: &pgoutput::TupleData) -> Result<Self, Error> {",
-        "        if tuple_data.number_of_columns != 3 {",
+        f"        if tuple_data.number_of_columns != {n_cols} {{",
         "            return Err(Error::UnexpectedNumberOfColumns {",
         "                actual: tuple_data.number_of_columns as usize,",
-        "                expected: 3,",
+        f"                expected: {n_cols},",
         "            });",
         "        }",
         "",
@@ -669,6 +687,10 @@ def render_value_provider_class(db: QuantityDb) -> list[str]:
         "#[derive(Debug)]",
         "pub struct ValueProvider {",
     ]
+    for entity in db.entities:
+        lines += [
+            f"    {entity.name}: HashMap<String, {entity.name}Def>,",
+        ]
     for table in db.tables:
         for column in table.columns:
             lines.append(
@@ -684,6 +706,10 @@ def render_value_provider_class(db: QuantityDb) -> list[str]:
         "    pub fn new() -> Self {",
         "        Self {",
     ]
+    for entity in db.entities:
+        lines += [
+            f"            {entity.name}: HashMap::new(),",
+        ]
     for table in db.tables:
         for column in table.columns:
             lines += [
@@ -692,6 +718,23 @@ def render_value_provider_class(db: QuantityDb) -> list[str]:
     lines += [
         "        }",
         "    }",
+        "",
+    ]
+    for entity in db.entities:
+        lines += [
+            f"    pub fn get_entity_def_{entity.name}(&self, name: &str) -> Option<&{entity.name}Def> {{",
+            f"        self.{entity.name}.get(name)",
+            "    }",
+            "",
+        ]
+        lines += [
+            f"    pub fn get_entity_{entity.name}(&self, name: &str) -> Option<{entity.name}> {{",
+            f"        let entity_def = self.get_entity_def_{entity.name}(name)?;",
+            f"         Some({entity.name}(entity_def.Id{entity.name}Def))"
+            "    }",
+            "",
+        ]
+    lines += [
         "",
         "    fn _get_value_impl(&self, name: &'static str, selector: &Selector, t: &Time) -> Option<f64> {",
         "        match name {",
@@ -762,6 +805,15 @@ def render_load_value_provider(db: QuantityDb) -> list[str]:
         "pub async fn load_value_provider(pool: &sqlx::PgPool) -> ValueProvider {",
         "    let mut vp = ValueProvider::new();",
     ]
+
+    for entity in db.entities:
+        lines += [
+            f"    let rows = sqlx::query_as::<_, {entity.name}Def>(&{entity.name}Def::query()).fetch_all(pool).await.unwrap();",
+            "    for row in rows {",
+            "        vp." + entity.name + ".insert(row.Jmeno.clone(), row);",
+            "    }",
+        ]
+
     for table in db.tables:
         lines += [
             f"    let rows = sqlx::query_as::<_, tables::{table.name}>(&tables::{table.name}::query()).fetch_all(pool).await.unwrap();",
@@ -795,6 +847,7 @@ def render_value_provider(path: Path, db: QuantityDb) -> list[str]:
     use ampiato::replication::pgoutput::Decode;
     use ampiato::replication::TableFromTupleData;
     use ampiato::{Time, TimeSeriesChanges, TimeSeriesDense, ValueProvider as _};
+    use ampiato::replication::pgoutput::EntityRef;
     use ampiato::{Error, TableMetadata, TableValues};
     use ampiato::FromTupleData;
     use sqlx::Row;
@@ -851,6 +904,8 @@ def write_quantities_schema(path: Path):
 
 def main():
     print("Ampiato")
+
+    dotenv.load_dotenv()
 
     db = load_db(Path("quantities.json"))
     pprint(db)

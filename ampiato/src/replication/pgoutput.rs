@@ -359,6 +359,9 @@ impl ColumnValue {
 }
 
 pub trait EntityRef {
+    type EntityDef;
+
+    fn entity_name() -> &'static str;
     fn id(&self) -> i64;
     fn from_entity_id(id: i64) -> Self;
 }

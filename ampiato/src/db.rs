@@ -60,6 +60,10 @@ where
         Self::from_database_url(&database_url, replication).await
     }
 
+    pub fn value_provider(&self) -> &VP {
+        &self.value_provider
+    }
+
     pub async fn from_database_url(
         database_url: &str,
         replication: bool,
@@ -310,9 +314,12 @@ where
         let refs = (*self.refs).borrow();
         let deps = (*self.deps).borrow();
 
-        let r#ref = refs.get(&(name, selector.clone(), t.clone())).unwrap();
+        let r#ref = match refs.get(&(name, selector.clone(), t.clone())) {
+            Some(&r#ref) => r#ref,
+            None => return updated_subscribers,
+        };
 
-        let mut dirty_refs = vec![*r#ref];
+        let mut dirty_refs = vec![r#ref];
 
         while let Some(ref_) = dirty_refs.pop() {
             if self.subs.contains_key(&ref_) {
